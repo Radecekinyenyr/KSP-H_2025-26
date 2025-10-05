@@ -31,18 +31,23 @@ vector<vector<int>> generateRandomInputs(int N, int K) {
 
 int main() {
 
-    int N = 500;
+    int N = 100;
     int member;
 
 
-    vector<vector<int>> inputs = generateRandomInputs(N, 5000);
+    vector<vector<int>> inputs = generateRandomInputs(N, 50000);
 
-    //vector<vector<int>> inputs = {{1,3,2,3,3,3,2,1,1}};
+
+    //vector<vector<int>> inputs = {{3,1,3,2,3}};
+    //vector<vector<int>> inputs = {{1,2,3,1,2,2,2,2,2,2,2}};
     //vector<vector<int>> inputs = {{1,1,1,1,3,2,3,3,3,1}};
     //vector<vector<int>> inputs = {{3,1,1,3,1,2,3,1,1,2}};
     //vector<vector<int>> inputs = {{3,2,2,3,2,2,3,3,2,2,1,2,2,2,2,1,1,3,2,2,1,1,2,1,3,3,2,2,1,3,1,2,2,2,2,2,3,2,2,2,3,2,2,1,1,2,1,3,1,1}}; // N = 50
     vector<int> worst_input;
     vector<int> worst_output;
+    vector<int> trouble_result;
+    vector<int> trouble_input;
+
     int biggest_loss = 0, input_index = 0;
     for (int K = 0; K < inputs.size(); K++) {
 
@@ -68,13 +73,19 @@ int main() {
                     members_to_be_used.erase(remove(members_to_be_used.begin(), members_to_be_used.end(), member), members_to_be_used.end());
                 }
                 else if (output[N-1] == -1 && output[0] != member) {
-                    output[N-1] = member;
-                    last_member = member;
-                    left.second--;
-                    right.second--;
-                    members_to_be_used.erase(remove(members_to_be_used.begin(), members_to_be_used.end(), member), members_to_be_used.end());
-                    middle_member = members_to_be_used[0];
-                    all_groups_are_declared = true;
+                    if (left.first < left.second - 1) {
+                        output[N-1] = member;
+                        last_member = member;
+                        left.second--;
+                        right.second--;
+                        members_to_be_used.erase(remove(members_to_be_used.begin(), members_to_be_used.end(), member), members_to_be_used.end());
+                        middle_member = members_to_be_used[0];
+                        all_groups_are_declared = true;
+                    }
+                    else {
+                        //cout << "Not enough space for members to be declared" << endl;
+                        break;
+                    }
                 }
                 else {
                     output[left.first] = member;
@@ -94,7 +105,7 @@ int main() {
                     }
                     else {
                         if (right.first < right.second - 1) {
-                            int new_pos = (right.second - right.first) / 2 + right.first + 1;
+                            int new_pos = (right.second - right.first) / 2 + right.first;
                             output[new_pos] = member;
                             left.first = right.first;
                             left.second = new_pos-1;
@@ -104,7 +115,7 @@ int main() {
                             middle_member = mid;
                         }
                         else {
-                            cout << "Not enough space for members to be declared" << endl;
+                            //cout << "Not enough space for members to be declared" << endl;
                             break;
                         }
                     }
@@ -112,11 +123,17 @@ int main() {
                 }
                 else if (member == middle_member) {
                     if (middle_members_are_used == false) {
-                        int new_pos = (right.second - right.first) / 2 + right.first + 1;
-                        output[new_pos] = member;
-                        right.first = new_pos + 1;
-                        left.second = new_pos - 1;
-                        middle_members_are_used = true;
+                        if (right.first < right.second - 1) {
+                            int new_pos = (right.second - right.first) / 2 + right.first;
+                            output[new_pos] = member;
+                            right.first = new_pos + 1;
+                            left.second = new_pos - 1;
+                            middle_members_are_used = true;
+                        }
+                        else {
+                            //cout << "Not enough space for members to be declared" << endl;
+                            break;
+                        }
                     }
                     else {
                         if (left.second - left.first >= right.second - right.first && left.second - left.first >= 1) {
@@ -128,7 +145,7 @@ int main() {
                             right.first++;
                         }
                         else {
-                            cout << "Not enough space for members to be declared" << endl;
+                            //cout << "Not enough space for members to be declared" << endl;
                             break;
                         }
                     }
@@ -143,7 +160,7 @@ int main() {
                     }
                     else {
                         if (left.first < left.second - 1) {
-                            int new_pos = (left.second - left.first) / 2 + left.first + 1;
+                            int new_pos = (left.second - left.first) / 2 + left.first;
                             output[new_pos] = member;
                             right.second = left.second;
                             left.second = new_pos-1;
@@ -153,7 +170,7 @@ int main() {
                             middle_member = mid;
                         }
                         else {
-                            cout << "Not enough space for members to be declared" << endl;
+                            //cout << "Not enough space for members to be declared" << endl;
                             break;
                         }
                     }
@@ -174,6 +191,11 @@ int main() {
             if (output[i] == -1) {
                 lossCounter++;
             }
+
+            if (i > 0 && output[i] > 0 && output[i-1] > 0 && output[i] != output[i-1]) {
+                trouble_result = output;
+                trouble_input = inputs[K];
+            }
         }
         if (lossCounter > biggest_loss) {
             biggest_loss = lossCounter;
@@ -185,13 +207,29 @@ int main() {
         cout << "Loss: " << lossCounter << endl;
     }
 
-    cout << "biggest_loss: " << biggest_loss << " Input index: " << input_index << endl;
+    if (trouble_result.size() > 0) {
+        cout << "Trouble input: " << endl;
+        for (int i = 0; i < N; i++) {
+            cout << trouble_input[i] << ' ';
+        }
+
+        cout << endl;
+
+        cout << "Trouble result: " << endl;
+        for (int i = 0; i < N; i++) {
+            cout << trouble_result[i] << ' ';
+        }
+        cout << endl;
+    }
+
+    cout << "Biggest_loss: " << biggest_loss << " Input index: " << input_index << endl;
+    cout << "Input with biggest loss: " << endl;
     for (int i = 0; i < N; i++) {
         cout << worst_input[i] << ' ';
 
     }
     cout << endl;
-
+    cout << "Output from this input: " << endl;
     for (int i = 0; i < N; i++) {
         cout << worst_output[i] << ' ';
 
