@@ -9,7 +9,7 @@
 #include <random>
 
 using namespace std;
-
+// Funkce pro generování náhodných vstupů (pro test algoritmu)
 vector<vector<int>> generateRandomInputs(int N, int K) {
     vector<vector<int>> allInputs;
     allInputs.reserve(K);
@@ -30,34 +30,35 @@ vector<vector<int>> generateRandomInputs(int N, int K) {
 }
 
 int main() {
-    ifstream inputFile("/Users/radekzach/CLionProjects/KSP_H_38_1_2/01.in");
-    ofstream outputFile("output.txt");
 
-    int N = 100;
-
-    //inputFile >> N;
-
+    int N = 500;
     int member;
-    vector<int> output(N, -1);
 
-    pair<int, int> left = {0, N-1}, right = {0, N-1};
-    vector<int> members_to_be_used = {1,2,3};
-    bool all_groups_are_declared = false, middle_members_are_used = false;
-    int first_member, middle_member, last_member;
 
-    vector<vector<int>> inputs = generateRandomInputs(N, 1);
+    vector<vector<int>> inputs = generateRandomInputs(N, 5000);
 
+    //vector<vector<int>> inputs = {{1,3,2,3,3,3,2,1,1}};
+    //vector<vector<int>> inputs = {{1,1,1,1,3,2,3,3,3,1}};
+    //vector<vector<int>> inputs = {{3,1,1,3,1,2,3,1,1,2}};
+    //vector<vector<int>> inputs = {{3,2,2,3,2,2,3,3,2,2,1,2,2,2,2,1,1,3,2,2,1,1,2,1,3,3,2,2,1,3,1,2,2,2,2,2,3,2,2,2,3,2,2,1,1,2,1,3,1,1}}; // N = 50
+    vector<int> worst_input;
+    vector<int> worst_output;
     int biggest_loss = 0, input_index = 0;
-    for (int K = 0; K < inputs.size(); ++K) {
+    for (int K = 0; K < inputs.size(); K++) {
+
+        vector<int> output(N, -1);
+        pair<int, int> left = {0, N-1}, right = {0, N-1};
+        vector<int> members_to_be_used = {1,2,3};
+        bool all_groups_are_declared = false, middle_members_are_used = false;
+        int first_member, middle_member, last_member;
         cout << "Inputs: " << K << endl;
         for (int i = 0; i < inputs[K].size(); ++i) {
             cout << inputs[K][i] << " ";
         }
         cout << endl;
+
         for (int i = 0; i < N; i++) {
-            //inputFile >> member;
             member = inputs[K][i];
-            //cout << member << endl;
             if (all_groups_are_declared == false) {
                 if (output[0] == -1) {
                     output[0] = member;
@@ -158,11 +159,14 @@ int main() {
                     }
                 }
             }
+/*
             for (int i = 0; i < N; i++) {
                 cout << output[i] << ' ';
             }
             cout << endl;
+*/
         }
+
         cout << "Output: " << K << endl;
         int lossCounter = 0;
         for (int i = 0; i < N; i++) {
@@ -174,21 +178,23 @@ int main() {
         if (lossCounter > biggest_loss) {
             biggest_loss = lossCounter;
             input_index = K;
+            worst_input = inputs[K];
+            worst_output = output;
         }
         cout << endl;
         cout << "Loss: " << lossCounter << endl;
     }
 
     cout << "biggest_loss: " << biggest_loss << " Input index: " << input_index << endl;
-
-    /*
     for (int i = 0; i < N; i++) {
-        cout << output[i] << ' ';
-    }
-    cout << "Třetí proměná: " << middle_member << endl;
-    */
-    inputFile.close();
-    outputFile.close();
+        cout << worst_input[i] << ' ';
 
+    }
+    cout << endl;
+
+    for (int i = 0; i < N; i++) {
+        cout << worst_output[i] << ' ';
+
+    }
     return 0;
 }
