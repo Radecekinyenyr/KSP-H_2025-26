@@ -44,11 +44,11 @@ int main() {
     char letters[SIZE];
     //test
     for (int i = 0; i < SIZE; i++) {
-        letters[i] = 'A' + (i % 26);  // cyklické opakování A–Z
+        letters[i] = 'A' + (i % 26);
     }
     for (int i = 0; i < SIZE; i++) {
         cout << letters[i];
-        if ((i + 1) % 26 == 0) cout << " ";  // vizuální oddělení
+        if ((i + 1) % 26 == 0) cout << " ";
     }
     cout << endl;
     while (getline(inputFile,line)) {
@@ -58,7 +58,7 @@ int main() {
     }
 
 /*
-          // zkus všech 26 Caesar posunů
+          // zkusim všech 26 caesar posunů
         int count = 0;
         float median = 0.0;
 
@@ -75,7 +75,7 @@ int main() {
                 cout << "median: " << newCount << "přetypovaný na int: " << (int)round(newCount)<< endl;
                 word += letters[(int)round(newCount)];
 
-                // 2. Hledání petternů v písmenech
+                // 2. hledání peternů v písmenech
 
                 char letter = 26.0 * count / 412.0 + 'A';
                 //int letterK = (int)round(412 / count) % 26;
@@ -83,7 +83,7 @@ int main() {
                 cout << letter << endl;
                 word += letter;
 
-                // 3. Binární kódování
+                // 3. binární kódování
 
                 if (count % 2 == 0) {
                     word = word + char((count) % 26);
