@@ -42,7 +42,7 @@ int main() {
     const double shiftByRuler = 3.27777778;
     const int SIZE = 59;
     char letters[SIZE];
-
+    //test
     for (int i = 0; i < SIZE; i++) {
         letters[i] = 'A' + (i % 26);  // cyklické opakování A–Z
     }
